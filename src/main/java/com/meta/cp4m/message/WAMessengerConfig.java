@@ -10,6 +10,8 @@ package com.meta.cp4m.message;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.crypto.Mac;
 import java.util.UUID;
 
 public class WAMessengerConfig implements HandlerConfig {
@@ -18,6 +20,7 @@ public class WAMessengerConfig implements HandlerConfig {
   private final String verifyToken;
   private final String appSecret;
   private final String accessToken;
+  private @Nullable final String appsecret_proof;
 
   private WAMessengerConfig(
       @JsonProperty("name") String name,
@@ -37,6 +40,7 @@ public class WAMessengerConfig implements HandlerConfig {
     this.verifyToken = verifyToken;
     this.appSecret = appSecret;
     this.accessToken = accessToken;
+    this.appsecret_proof = null;
   }
 
   public static WAMessengerConfig of(String verifyToken, String appSecret, String accessToken) {
@@ -64,5 +68,9 @@ public class WAMessengerConfig implements HandlerConfig {
 
   public String accessToken() {
     return accessToken;
+  }
+
+  public String appsecret_proof() {
+    return MetaHandlerUtils.hmac(accessToken, appSecret);
   }
 }
